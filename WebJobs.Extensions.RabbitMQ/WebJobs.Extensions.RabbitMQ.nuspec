@@ -8,7 +8,6 @@
     <owners>Sarmaad</owners>
     <licenseUrl>https://github.com/Sarmaad/WebJobs.Extensions.RabbitMQ/blob/master/license.txt</licenseUrl>
     <projectUrl>https://github.com/Sarmaad/WebJobs.Extensions.RabbitMQ</projectUrl>
-    <iconUrl></iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>RabbitMQ extension for Azure WebJobs.</description>
     <releaseNotes></releaseNotes>
