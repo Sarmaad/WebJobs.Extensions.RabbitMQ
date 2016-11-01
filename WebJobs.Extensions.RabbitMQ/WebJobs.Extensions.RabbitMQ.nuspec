@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<package >
+  <metadata>
+    <id>WebJobs.Extensions.RabbitMQ</id>
+    <version>$version$</version>
+    <title>WebJobs RabbitMQ Extension</title>
+    <authors>Sarmaad Amin</authors>
+    <owners>Sarmaad</owners>
+    <licenseUrl></licenseUrl>
+    <projectUrl>https://github.com/Sarmaad/WebJobs.Extensions.RabbitMQ</projectUrl>
+    <iconUrl></iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description></description>
+    <releaseNotes></releaseNotes>
+    <copyright>Copyright &#x00A9;</copyright>
+    <dependencies>
+      <dependency id="Microsoft.Azure.WebJobs.Extensions" version="1.0.1" />
+      <dependency id="RabbitMQ.Client" version="4.1.1" />
+    </dependencies>
+    <tags>WebJobs, RabbitMQ</tags>
+  </metadata>
+</package>
