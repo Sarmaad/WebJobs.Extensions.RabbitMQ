@@ -6,11 +6,11 @@
     <title>WebJobs RabbitMQ Extension</title>
     <authors>Sarmaad Amin</authors>
     <owners>Sarmaad</owners>
-    <licenseUrl></licenseUrl>
+    <licenseUrl>https://github.com/Sarmaad/WebJobs.Extensions.RabbitMQ/blob/master/license.txt</licenseUrl>
     <projectUrl>https://github.com/Sarmaad/WebJobs.Extensions.RabbitMQ</projectUrl>
     <iconUrl></iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description></description>
+    <description>RabbitMQ extension for Azure WebJobs.</description>
     <releaseNotes></releaseNotes>
     <copyright>Copyright &#x00A9;</copyright>
     <dependencies>
@@ -19,7 +19,4 @@
     </dependencies>
     <tags>WebJobs, RabbitMQ</tags>
   </metadata>
-  <files>
-    <file src="bin\$configuration$\$id$.dll" />
-  </files>
 </package>
