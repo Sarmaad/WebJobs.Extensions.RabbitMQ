@@ -19,4 +19,7 @@
     </dependencies>
     <tags>WebJobs, RabbitMQ</tags>
   </metadata>
+  <files>
+    <file src="bin\$configuration$\$id$.dll" />
+  </files>
 </package>
