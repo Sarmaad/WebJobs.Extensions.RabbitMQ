@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using System.Runtime.Serialization.Formatters;
 using System.Text;
 using Microsoft.Azure.WebJobs.Extensions.Bindings;
@@ -29,6 +30,27 @@ namespace WebJobs.Extensions.RabbitMQ.Binding
                 return JsonConvert.DeserializeObject<JObject>(Encoding.UTF8.GetString(_value.MessageBytes));
             }
 
+            //if (typeof(MessageContext<>).IsAssignableFrom(Type.GetGenericTypeDefinition()))
+            if (typeof(MessageContext).IsAssignableFrom(Type))
+            {
+                var t = (MessageContext) Activator.CreateInstance(Type);
+
+                t.MessageId = _value.MessageId;
+                t.ApplicationId = _value.ApplicationId;
+                t.ContentType = _value.ContentType;
+                t.CorrelationId = _value.CorrelationId;
+                t.Headers = _value.Headers;
+
+                t.Message = JsonConvert.DeserializeObject(Encoding.UTF8.GetString(_value.MessageBytes),
+                    new JsonSerializerSettings
+                    {
+                        TypeNameHandling = TypeNameHandling.All,
+                        TypeNameAssemblyFormat = FormatterAssemblyStyle.Full,
+
+                    });
+                
+                return t;
+            }
             
             // deserialize object based on the settings
             var obj = JsonConvert.DeserializeObject(Encoding.UTF8.GetString(_value.MessageBytes),

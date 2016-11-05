@@ -30,9 +30,17 @@ namespace WebJobs.Extensions.RabbitMQ.Listener
             _consumer = new EventingBasicConsumer(_channel);
             _consumer.Received += (sender, args) =>
             {
-                var result = _executor.TryExecuteAsync(
-                    new TriggeredFunctionData {TriggerValue = new RabbitQueueTriggerValue {MessageBytes = args.Body}},
-                    CancellationToken.None).Result;
+                var triggerValue = new RabbitQueueTriggerValue {MessageBytes = args.Body};
+                if (args.BasicProperties != null)
+                {
+                    triggerValue.MessageId = args.BasicProperties.MessageId;
+                    triggerValue.ApplicationId = args.BasicProperties.AppId;
+                    triggerValue.ContentType = args.BasicProperties.ContentType;
+                    triggerValue.CorrelationId = args.BasicProperties.CorrelationId;
+                    triggerValue.Headers = args.BasicProperties.Headers;
+                }
+                
+                var result = _executor.TryExecuteAsync(new TriggeredFunctionData{TriggerValue = triggerValue}, CancellationToken.None).Result;
 
                 if (result.Succeeded)
                     _channel.BasicAck(args.DeliveryTag, false);

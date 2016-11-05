@@ -95,6 +95,7 @@
     <Compile Include="Binding\RabbitMessageAttributeBindingProvider.cs" />
     <Compile Include="Binding\RabbitMessageBinding.cs" />
     <Compile Include="Binding\RabbitMessageValueBinder.cs" />
+    <Compile Include="MessageContext.cs" />
     <Compile Include="RabbitMessageAttribute.cs" />
     <Compile Include="Listener\RabbitQueueListener.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
