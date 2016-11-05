@@ -4,3 +4,19 @@
 
 This is an extension to Azure WebJobs adding RabbitMQ support.
 
+<b>RabbitQueueTriggerAttribute</b>: this attribute will subscribe to the queue and triggers whenever a message arrives.
+```
+[RabbitQueueTrigger("queueName")]
+```
+
+<b>RabbitQueueBinderAttribute</b>: this attribute extends RabbitQueueTriggerAttribute to allow for dynamic creation of the queue and bind it to the exchange.
+```
+[RabbitQueueBinder("exchangeName", "routingKey", "errorExchangeName(optional)","autoDelete=false(optional)","durable=true(optional)","exclusive=false(optional)")]
+```
+
+<b>RabbitMessageAttribute</b>: this attribute allows you to publish a message to an exchange.
+```
+[RabbitMessage("exchangeName","routingKey","mandatory=false(optional)"]
+```
+
+Blog Post: http://www.sarmaad.com/2016/11/azure-webjobs-and-rabbitmq/
