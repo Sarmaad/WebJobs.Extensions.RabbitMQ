@@ -13,7 +13,7 @@
     <releaseNotes></releaseNotes>
     <copyright>Copyright &#x00A9;</copyright>
     <dependencies>
-      <dependency id="Microsoft.Azure.WebJobs.Extensions" version="1.0.1" />
+      <dependency id="Microsoft.Azure.WebJobs.Extensions" version="2.0.0" />
       <dependency id="RabbitMQ.Client" version="4.1.1" />
     </dependencies>
     <tags>WebJobs, RabbitMQ</tags>
