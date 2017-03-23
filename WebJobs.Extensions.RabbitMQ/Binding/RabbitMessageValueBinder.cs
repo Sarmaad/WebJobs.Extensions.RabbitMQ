@@ -29,11 +29,11 @@ namespace WebJobs.Extensions.RabbitMQ.Binding
             _parameter = parameter;
         }
 
-        public override object GetValue()
+        public override Task<object> GetValueAsync()
         {
             if (Type.IsAbstract || Type.IsInterface || _parameter.IsOut) return null;
 
-            return (Type)Activator.CreateInstance(Type);
+            return new Task<object>(() =>  Activator.CreateInstance(Type));
         }
 
         public override string ToInvokeString()
@@ -87,5 +87,7 @@ namespace WebJobs.Extensions.RabbitMQ.Binding
             channel.BasicPublish(_exchange, _routingKey,_mandatory, null, Encoding.UTF8.GetBytes(message));
 
         }
+
+        
     }
 }

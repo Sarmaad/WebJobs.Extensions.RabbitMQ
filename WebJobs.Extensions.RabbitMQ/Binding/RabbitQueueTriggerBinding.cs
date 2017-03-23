@@ -66,8 +66,6 @@ namespace WebJobs.Extensions.RabbitMQ.Binding
             }
 
 
-
-
             return Task.FromResult<IListener>(new RabbitQueueListener(_connection.CreateModel(),_queueName, context.Executor));
         }
 
