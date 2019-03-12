@@ -8,7 +8,7 @@ namespace WebJobs.Extensions.RabbitMQ.Binding
 {
     internal class RabbitMessageAttributeBindingProvider : IBindingProvider
     {
-        readonly IConnection _connection;
+        private readonly IConnection _connection;
 
         public RabbitMessageAttributeBindingProvider(IConnection connection)
         {
@@ -17,18 +17,12 @@ namespace WebJobs.Extensions.RabbitMQ.Binding
 
         public Task<IBinding> TryCreateAsync(BindingProviderContext context)
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException("context");
-            }
+            if (context == null) throw new ArgumentNullException(nameof(context));
 
             // Determine whether we should bind to the current parameter
             var parameter = context.Parameter;
-            var attribute = parameter.GetCustomAttribute<RabbitMessageAttribute>(inherit: false);
-            if (attribute == null)
-            {
-                return Task.FromResult<IBinding>(null);
-            }
+            var attribute = parameter.GetCustomAttribute<RabbitMessageAttribute>(false);
+            if (attribute == null) return Task.FromResult<IBinding>(null);
 
             ////// TODO: Include any other parameter types this binding supports in this check
             //IEnumerable<Type> supportedTypes = new List<Type>
@@ -43,9 +37,7 @@ namespace WebJobs.Extensions.RabbitMQ.Binding
             //        "Can't bind RabbitMessageAttribute to type '{0}'.", parameter.ParameterType));
             //}
 
-            return Task.FromResult<IBinding>(new RabbitMessageBinding(_connection, attribute.Exchange, attribute.RoutingKey,attribute.Mandatory, parameter));
+            return Task.FromResult<IBinding>(new RabbitMessageBinding(_connection, attribute.Exchange, attribute.RoutingKey, attribute.Mandatory, parameter));
         }
-
-        
     }
 }

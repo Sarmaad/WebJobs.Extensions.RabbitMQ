@@ -10,17 +10,16 @@ namespace WebJobs.Extensions.RabbitMQ
         public RabbitQueueTriggerAttribute(string queueName)
         {
             QueueName = queueName;
-
         }
 
         public string QueueName { get; set; }
     }
 
-
-    [AttributeUsage(AttributeTargets.Parameter,AllowMultiple = false)]
-    public class RabbitQueueBinderAttribute:Attribute
+    [AttributeUsage(AttributeTargets.Parameter)]
+    public class RabbitQueueBinderAttribute : Attribute
     {
-        public RabbitQueueBinderAttribute(string exchange, string routingKey, string errorExchange="", bool autoDelete=false, bool durable=true, bool execlusive=false)
+        public RabbitQueueBinderAttribute(string exchange, string routingKey, string errorExchange = "", bool autoDelete = false, bool durable = true,
+            bool execlusive = false)
         {
             Exchange = exchange;
             RoutingKey = routingKey;
@@ -30,14 +29,17 @@ namespace WebJobs.Extensions.RabbitMQ
             Execlusive = execlusive;
         }
 
-        public bool AutoDelete { get; set; } = false;
+        public bool AutoDelete { get; set; }
+
         public bool Durable { get; set; } = true;
-        public bool Execlusive { get; set; } = false;
+
+        public bool Execlusive { get; set; }
 
         public string Exchange { get; set; }
+
         public string RoutingKey { get; set; }
+
         public string ErrorExchange { get; set; }
-        
     }
 
     internal class RabbitQueueTriggerParameterDescriptor : TriggerParameterDescriptor
@@ -51,12 +53,15 @@ namespace WebJobs.Extensions.RabbitMQ
     public class RabbitQueueTriggerValue
     {
         public string MessageId { get; set; }
+
         public string ApplicationId { get; set; }
+
         public string ContentType { get; set; }
+
         public string CorrelationId { get; set; }
+
         public IDictionary<string, object> Headers { get; set; }
 
         public byte[] MessageBytes { get; set; }
-        
     }
 }

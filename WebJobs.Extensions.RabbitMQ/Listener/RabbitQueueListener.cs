@@ -7,18 +7,15 @@ using RabbitMQ.Client.Events;
 
 namespace WebJobs.Extensions.RabbitMQ.Listener
 {
-    
     internal class RabbitQueueListener : IListener
     {
-        readonly IModel _channel;
-        readonly string _queueName;
-        readonly ITriggeredFunctionExecutor _executor;
-        EventingBasicConsumer _consumer;
-        
-        string _consumerTag;
+        private readonly IModel _channel;
+        private readonly ITriggeredFunctionExecutor _executor;
+        private readonly string _queueName;
+        private EventingBasicConsumer _consumer;
+        private string _consumerTag;
 
-
-        public RabbitQueueListener(IModel channel, string queueName,  ITriggeredFunctionExecutor executor)
+        public RabbitQueueListener(IModel channel, string queueName, ITriggeredFunctionExecutor executor)
         {
             _channel = channel;
             _queueName = queueName;
@@ -39,28 +36,23 @@ namespace WebJobs.Extensions.RabbitMQ.Listener
                     triggerValue.CorrelationId = args.BasicProperties.CorrelationId;
                     triggerValue.Headers = args.BasicProperties.Headers;
                 }
-                
-                var result = _executor.TryExecuteAsync(new TriggeredFunctionData{TriggerValue = triggerValue}, CancellationToken.None).Result;
+
+                var result = _executor.TryExecuteAsync(new TriggeredFunctionData {TriggerValue = triggerValue}, CancellationToken.None).Result;
 
                 if (result.Succeeded)
                     _channel.BasicAck(args.DeliveryTag, false);
                 else
                     _channel.BasicNack(args.DeliveryTag, false, false);
-
             };
 
             _consumerTag = _channel.BasicConsume(_queueName, false, _consumer);
-            
-            return Task.FromResult(true);
+            return Task.CompletedTask;
         }
-
-        
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
             _consumer = null;
-            
-            return Task.FromResult(true);
+            return Task.CompletedTask;
         }
 
         public void Dispose()
@@ -73,7 +65,5 @@ namespace WebJobs.Extensions.RabbitMQ.Listener
         {
             _channel.Abort();
         }
-
-        
     }
 }
