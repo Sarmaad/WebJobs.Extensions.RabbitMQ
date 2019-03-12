@@ -25,9 +25,9 @@ namespace WebJobs.Extensions.RabbitMQ.Listener
         public Task StartAsync(CancellationToken cancellationToken)
         {
             _consumer = new EventingBasicConsumer(_channel);
-            _consumer.Received += (sender, args) =>
+            _consumer.Received += async (sender, args) =>
             {
-                var triggerValue = new RabbitQueueTriggerValue {MessageBytes = args.Body};
+                var triggerValue = new RabbitQueueTriggerValue { MessageBytes = args.Body };
                 if (args.BasicProperties != null)
                 {
                     triggerValue.MessageId = args.BasicProperties.MessageId;
@@ -37,7 +37,8 @@ namespace WebJobs.Extensions.RabbitMQ.Listener
                     triggerValue.Headers = args.BasicProperties.Headers;
                 }
 
-                var result = _executor.TryExecuteAsync(new TriggeredFunctionData {TriggerValue = triggerValue}, CancellationToken.None).Result;
+                var result = await _executor.TryExecuteAsync(new TriggeredFunctionData {TriggerValue = triggerValue}, CancellationToken.None)
+                    .ConfigureAwait(false);
 
                 if (result.Succeeded)
                     _channel.BasicAck(args.DeliveryTag, false);
