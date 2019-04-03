@@ -13,14 +13,14 @@ namespace WebJobs.Extensions.RabbitMQ.Binding
 {
     internal class RabbitMessageValueBinder : ValueBinder
     {
-        readonly IConnection _connection;
-        readonly string _exchange;
-        readonly string _routingKey;
-        readonly bool _mandatory;
-        readonly ParameterInfo _parameter;
+        private readonly IConnection _connection;
+        private readonly string _exchange;
+        private readonly bool _mandatory;
+        private readonly ParameterInfo _parameter;
+        private readonly string _routingKey;
 
-
-        public RabbitMessageValueBinder(IConnection connection, string exchange,string routingKey,bool mandatory, ParameterInfo parameter) : base(parameter.ParameterType)
+        public RabbitMessageValueBinder(IConnection connection, string exchange, string routingKey, bool mandatory, ParameterInfo parameter) : base(
+            parameter.ParameterType)
         {
             _connection = connection;
             _exchange = exchange;
@@ -33,7 +33,7 @@ namespace WebJobs.Extensions.RabbitMQ.Binding
         {
             if (Type.IsAbstract || Type.IsInterface || _parameter.IsOut) return null;
 
-            return new Task<object>(() =>  Activator.CreateInstance(Type));
+            return new Task<object>(() => Activator.CreateInstance(Type));
         }
 
         public override string ToInvokeString()
@@ -50,44 +50,37 @@ namespace WebJobs.Extensions.RabbitMQ.Binding
                 channel.BasicReturn += (sender, args) =>
                 {
                     if (_mandatory)
-                    {
                         if (args.ReplyCode == 312)
                             throw new Exception("No Queue found to accept this message");
-                    }
-                    
                 };
 
                 if (value is string)
                     PublishMessage(channel, (string) value);
 
                 else if (value is IEnumerable)
-                    foreach (var message in (IEnumerable)value)
+                    foreach (var message in (IEnumerable) value)
                         PublishMessage(channel, JsonMessage(message));
 
                 else
                     PublishMessage(channel, JsonMessage(value));
             }
-            
+
             return Task.FromResult(true);
         }
 
-        string JsonMessage(object value)
+        private string JsonMessage(object value)
         {
             return JsonConvert.SerializeObject(value,
-                    new JsonSerializerSettings
-                    {
-                        TypeNameHandling = TypeNameHandling.All,
-                        TypeNameAssemblyFormat = FormatterAssemblyStyle.Full,
-
-                    });
+                new JsonSerializerSettings
+                {
+                    TypeNameHandling = TypeNameHandling.All,
+                    TypeNameAssemblyFormat = FormatterAssemblyStyle.Full
+                });
         }
 
-        void PublishMessage(IModel channel, string message)
+        private void PublishMessage(IModel channel, string message)
         {
-            channel.BasicPublish(_exchange, _routingKey,_mandatory, null, Encoding.UTF8.GetBytes(message));
-
+            channel.BasicPublish(_exchange, _routingKey, _mandatory, null, Encoding.UTF8.GetBytes(message));
         }
-
-        
     }
 }

@@ -8,14 +8,13 @@ namespace WebJobs.Extensions.RabbitMQ.Binding
 {
     internal class RabbitMessageBinding : IBinding
     {
-        readonly IConnection _connection;
-        readonly string _exchange;
-        readonly string _routingKey;
-        readonly bool _mandatory;
-        readonly ParameterInfo _parameter;
+        private readonly IConnection _connection;
+        private readonly string _exchange;
+        private readonly bool _mandatory;
+        private readonly ParameterInfo _parameter;
+        private readonly string _routingKey;
 
-
-        public RabbitMessageBinding(IConnection connection, string exchange, string routingKey,bool mandatory, ParameterInfo parameter)
+        public RabbitMessageBinding(IConnection connection, string exchange, string routingKey, bool mandatory, ParameterInfo parameter)
         {
             _connection = connection;
             _exchange = exchange;
@@ -24,21 +23,17 @@ namespace WebJobs.Extensions.RabbitMQ.Binding
             _parameter = parameter;
         }
 
-        public bool FromAttribute
-        {
-            get { return true; }
-        }
+        public bool FromAttribute => true;
 
         public Task<IValueProvider> BindAsync(BindingContext context)
         {
-            return Task.FromResult<IValueProvider>(new RabbitMessageValueBinder(_connection,_exchange,_routingKey,_mandatory, _parameter));
+            return Task.FromResult<IValueProvider>(new RabbitMessageValueBinder(_connection, _exchange, _routingKey, _mandatory, _parameter));
         }
 
         public Task<IValueProvider> BindAsync(object value, ValueBindingContext context)
         {
             return Task.FromResult<IValueProvider>(new RabbitMessageValueBinder(_connection, _exchange, _routingKey, _mandatory, _parameter));
         }
-
 
         public ParameterDescriptor ToParameterDescriptor()
         {
@@ -53,8 +48,5 @@ namespace WebJobs.Extensions.RabbitMQ.Binding
                 }
             };
         }
-
-
-
     }
 }

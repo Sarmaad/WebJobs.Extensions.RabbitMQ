@@ -13,11 +13,10 @@ namespace WebJobs.Extensions.RabbitMQ.Binding
 {
     internal class RabbitQueueTriggerBinding : ITriggerBinding
     {
-        readonly IConnection _connection;
-        readonly string _queueName;
-        readonly RabbitQueueBinderAttribute _queueBinderAttribute;
-        readonly ParameterInfo _parameter;
-        readonly IReadOnlyDictionary<string, Type> _bindingContract;
+        private readonly IConnection _connection;
+        private readonly ParameterInfo _parameter;
+        private readonly RabbitQueueBinderAttribute _queueBinderAttribute;
+        private readonly string _queueName;
 
         public RabbitQueueTriggerBinding(IConnection connection, string queueName, RabbitQueueBinderAttribute queueBinderAttribute, ParameterInfo parameter)
         {
@@ -25,18 +24,12 @@ namespace WebJobs.Extensions.RabbitMQ.Binding
             _queueName = queueName;
             _queueBinderAttribute = queueBinderAttribute;
             _parameter = parameter;
-            _bindingContract = CreateBindingDataContract();
+            BindingDataContract = CreateBindingDataContract();
         }
 
-        public IReadOnlyDictionary<string, Type> BindingDataContract
-        {
-            get { return _bindingContract; }
-        }
+        public IReadOnlyDictionary<string, Type> BindingDataContract { get; }
 
-        public Type TriggerValueType
-        {
-            get { return typeof(RabbitQueueTriggerValue); }
-        }
+        public Type TriggerValueType => typeof(RabbitQueueTriggerValue);
 
         public Task<ITriggerData> BindAsync(object value, ValueBindingContext context)
         {
@@ -50,7 +43,7 @@ namespace WebJobs.Extensions.RabbitMQ.Binding
             if (_queueBinderAttribute != null)
             {
                 // we need to dynamically declare and bind the queue
-                
+
                 var args = new Dictionary<string, object>();
                 if (!string.IsNullOrWhiteSpace(_queueBinderAttribute.ErrorExchange))
                 {
@@ -60,37 +53,38 @@ namespace WebJobs.Extensions.RabbitMQ.Binding
 
                 using (var channel = _connection.CreateModel())
                 {
-                    channel.QueueDeclare(_queueName, _queueBinderAttribute.Durable, _queueBinderAttribute.Execlusive, _queueBinderAttribute.AutoDelete,args);
-                    channel.QueueBind(_queueName, _queueBinderAttribute.Exchange,_queueBinderAttribute.RoutingKey);
+                    channel.QueueDeclare(_queueName, _queueBinderAttribute.Durable, _queueBinderAttribute.Execlusive, _queueBinderAttribute.AutoDelete, args);
+                    channel.QueueBind(_queueName, _queueBinderAttribute.Exchange, _queueBinderAttribute.RoutingKey);
                 }
             }
 
-
-            return Task.FromResult<IListener>(new RabbitQueueListener(_connection.CreateModel(),_queueName, context.Executor));
+            return Task.FromResult<IListener>(new RabbitQueueListener(_connection.CreateModel(), _queueName, context.Executor));
         }
 
         public ParameterDescriptor ToParameterDescriptor()
         {
             return new RabbitQueueTriggerParameterDescriptor
             {
-                Name = _parameter.Name,
-                
+                Name = _parameter.Name
             };
         }
 
-        IReadOnlyDictionary<string, object> GetBindingData(RabbitQueueTriggerValue value)
+        private IReadOnlyDictionary<string, object> GetBindingData(RabbitQueueTriggerValue value)
         {
-            var bindingData = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
-            bindingData.Add("RabbitQueueTrigger", value);
+            var bindingData = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase)
+            {
+                {"RabbitQueueTrigger", value}
+            };
 
-            
             return bindingData;
         }
 
-        IReadOnlyDictionary<string, Type> CreateBindingDataContract()
+        private IReadOnlyDictionary<string, Type> CreateBindingDataContract()
         {
-            var contract = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
-            contract.Add("RabbitQueueTrigger", typeof(RabbitQueueTriggerValue));
+            var contract = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase)
+            {
+                {"RabbitQueueTrigger", typeof(RabbitQueueTriggerValue)}
+            };
 
             return contract;
         }
